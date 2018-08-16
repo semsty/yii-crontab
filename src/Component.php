@@ -6,7 +6,6 @@ use yii\base\BootstrapInterface;
 use yii\base\Component as BaseComponent;
 use yii\base\InvalidConfigException;
 use yii\console\Application as ConsoleApp;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii2tech\crontab\CronTab;
 
@@ -14,15 +13,6 @@ class Component extends BaseComponent implements BootstrapInterface
 {
     public $commandClass = Command::class;
     public $commandOptions = [];
-
-    public $init = [];
-
-    protected $required_init = [
-        'polling' => [
-            '* * * * *',
-            '/app/yii schedule/pull'
-        ]
-    ];
 
     protected function getCommandId()
     {
@@ -64,13 +54,6 @@ class Component extends BaseComponent implements BootstrapInterface
         ]);
         $crontab->saveToFile($filepath);
         exec("crontab $filepath");
-    }
-
-    public function init()
-    {
-        foreach (ArrayHelper::merge($this->required_init, $this->init) as $name => $schedule) {
-            $this->add($name, ...$schedule);
-        }
     }
 
     public function add($name, $time, $command)
